@@ -12,3 +12,15 @@ def validate_products_payload(products_data):
         raise TypeError("'products' must be a list.")
 
     return True
+
+if __name__ == "__main__":
+    invalid_products_data = {
+        "products": "this is a test",
+        "total": 0,
+        "skip": 0,
+        "limit": 0
+    }
+
+    result = validate_products_payload(invalid_products_data)
+
+    print(result)
