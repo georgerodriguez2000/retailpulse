@@ -1,0 +1,27 @@
+services:
+  postgres:
+    image: postgres:17
+
+    container_name: retailpulse_postgres
+
+    environment:
+      POSTGRES_DB: retailpulse
+      POSTGRES_USER: retailpulse
+      POSTGRES_PASSWORD: retailpulse_dev
+
+    ports:
+      - "5433:5432"
+
+    volumes:
+      - retailpulse_postgres_data:/var/lib/postgresql/data
+      - ./sql/ddl/001_create_products.sql:/docker-entrypoint-initdb.d/001_create_products.sql:ro
+      - ./sql/ddl/002_create_pipeline_runs.sql:/docker-entrypoint-initdb.d/002_create_pipeline_runs.sql:ro
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U retailpulse -d retailpulse"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  retailpulse_postgres_data:

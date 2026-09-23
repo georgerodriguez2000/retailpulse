@@ -1,6 +1,11 @@
 .env
-.venv/
-venv/
+
 __pycache__/
 *.pyc
+.pytest_cache/
 .DS_Store
+
+data/raw/
+data/clean/
+data/rejected/
+

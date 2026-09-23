@@ -1,0 +1,62 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: retailpulse
+          POSTGRES_USER: retailpulse
+          POSTGRES_PASSWORD: retailpulse_dev
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U retailpulse -d retailpulse"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DB_HOST: localhost
+      DB_PORT: 5432
+      DB_NAME: retailpulse
+      DB_USER: retailpulse
+      DB_PASSWORD: retailpulse_dev
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Initialize database
+        run: |
+          PGPASSWORD=$DB_PASSWORD psql \
+            -h $DB_HOST \
+            -p $DB_PORT \
+            -U $DB_USER \
+            -d $DB_NAME \
+            -f sql/ddl/001_create_products.sql
+
+          PGPASSWORD=$DB_PASSWORD psql \
+            -h $DB_HOST \
+            -p $DB_PORT \
+            -U $DB_USER \
+            -d $DB_NAME \
+            -f sql/ddl/002_create_pipeline_runs.sql
+
+      - name: Run tests
+        run: python -m pytest
