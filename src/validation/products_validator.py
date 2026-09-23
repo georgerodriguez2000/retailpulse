@@ -1,5 +1,3 @@
-## ESTO VALIDA LOS DATOS DE LA API DE QUE LLEGUEN BIEN, es decir 
-## que la estructura este bien
 
 REQUIRED_KEYS = ["products", "total", "skip", "limit"]
 
